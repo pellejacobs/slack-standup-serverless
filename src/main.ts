@@ -1,4 +1,3 @@
-import { Handler } from 'aws-lambda'
 import { WebClient } from '@slack/client'
 import dynamodb from './dynamodb'
 
@@ -21,7 +20,10 @@ const getMessage = (channel, text) => ({
 
 const createResponse = userId => {
   const standupDate = new Date().toISOString().substring(0, 10)
-  const params = { TableName: process.env.DYNAMODB_TABLE, Item: { standupDate, userId, status: 'initiated' } }
+  const params: any = {
+    TableName: process.env.DYNAMODB_TABLE,
+    Item: { standupDate, userId, standupStatus: 'initiated' },
+  }
   return new Promise((resolve, reject) => {
     dynamodb.put(params, (err, data) => {
       if (err) reject(err)
@@ -41,7 +43,7 @@ const sendStandupInit = (users, ims) => userId => {
   ])
 }
 
-export const handler: Handler = async (event, context, callback) => {
+export const handler = async (event, context, callback) => {
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)
   const usersResponse: any = await web.users.list()
   const imResponse: any = await web.im.list()
