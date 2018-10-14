@@ -1,8 +1,10 @@
 import { updateStandup, getStandup } from './dynamodb'
 import { checkStandups } from './overview'
 import config from './config'
+import isAuthorized from './isAuthorized'
 
 export const handler = async (event, context, cb) => {
+  if (!isAuthorized(event)) return cb(null, { body: 'Not authorized', status: 401 })
   const rawbody = decodeURIComponent(event.body).replace('payload=', '')
   const body = JSON.parse(rawbody)
   const userId = body.user.id

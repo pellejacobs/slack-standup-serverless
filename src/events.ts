@@ -2,6 +2,7 @@ import { WebClient } from '@slack/client'
 import { getStandup, updateStandup } from './dynamodb'
 import { checkStandups } from './overview'
 import config from './config'
+import isAuthorized from './isAuthorized'
 
 const sendMessage = (channel, text) => {
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)
@@ -9,6 +10,7 @@ const sendMessage = (channel, text) => {
 }
 
 export const handler = async (event, context, cb) => {
+  if (!isAuthorized(event)) return cb(null, { body: 'Not authorized', status: 401 })
   if (!event.body) return cb(null, { body: 'No body found', status: 401 })
   const body = JSON.parse(event.body)
   if (body.challenge) return cb(null, { body: body.challenge }) // allow for verification

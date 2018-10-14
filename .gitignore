@@ -4,4 +4,4 @@ node_modules
 .dynamodb
 
 .DS_Store
-.env*
+.env.yml

@@ -6,6 +6,7 @@ provider:
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     SLACK_BOT_TOKEN: ${file(./.env.yml):SLACK_BOT_TOKEN}
+    SLACK_SIGNING_SECRET: ${file(./.env.yml):SLACK_SIGNING_SECRET}
     CHANNEL_NAME: ${file(./.env.yml):CHANNEL_NAME}
   iamRoleStatements:
     - Effect: Allow
