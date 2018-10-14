@@ -14,10 +14,10 @@ export const updateStandup = (userId, updatedFields) => {
     Key: { standupDate: getStandupDate(), userId },
     ExpressionAttributeValues: Object.keys(updatedFields).reduce((acc, key, index) => {
       const valueKey = `:value${index}`
-      return { ...acc, [valueKey]: [updatedFields[key]] }
+      return { ...acc, [valueKey]: updatedFields[key] }
     }, {}),
     UpdateExpression: Object.keys(updatedFields).reduce((acc, key, index) => {
-      return `${acc} ${key} = :value${index}${index > 0 ? ',' : ''}`
+      return `${acc}${index > 0 ? ',' : ''} ${key} = :value${index}`
     }, 'SET'),
   }
   return new Promise((resolve, reject) => {
