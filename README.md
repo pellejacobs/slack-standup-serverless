@@ -8,4 +8,5 @@ Plan:
 - [x] allow to send overview, ensure overview is only sent once
 - [x] deploy everything
 - [x] allow for customization of questions and answers
-- [ ] ensure security using the signing token
+- [x] ensure security using the signing token
+- [ ] write proper installation documentation
