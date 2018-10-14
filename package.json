@@ -10,6 +10,8 @@
     "serverless-plugin-typescript": "^1.1.5"
   },
   "dependencies": {
-    "@slack/client": "^4.8.0"
+    "@slack/client": "^4.8.0",
+    "aws-sdk": "^2.334.0",
+    "serverless-dynamodb-local": "^0.2.35"
   }
 }
