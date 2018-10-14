@@ -7,5 +7,5 @@ Plan:
 - [x] make messenger work with dynamodb: sls, aws-sdk, dynamodb
 - [x] allow to send overview, ensure overview is only sent once
 - [x] deploy everything
-- [ ] allow for customization of questions and answers
+- [x] allow for customization of questions and answers
 - [ ] ensure security using the signing token

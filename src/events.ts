@@ -1,6 +1,7 @@
 import { WebClient } from '@slack/client'
 import { getStandup, updateStandup } from './dynamodb'
 import { checkStandups } from './overview'
+import config from './config'
 
 const sendMessage = (channel, text) => {
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)
@@ -16,34 +17,32 @@ export const handler = async (event, context, cb) => {
   const text = body.event.text
   const respond = response => sendMessage(body.event.channel, response).then(() => cb(null, {}))
   const theStandup = await getStandup(userId)
-  if (!theStandup) return respond('The standup has not started yet')
+  if (!theStandup) return respond(config.early)
 
   const status = theStandup.Item.standupStatus
-  switch (status) {
-    case 'started':
-      await updateStandup(userId, { answer1: text, standupStatus: 'answered1' })
-      return respond('2. What are you working on today?')
-
-    case 'answered1':
-      await updateStandup(userId, { answer2: text, standupStatus: 'answered2' })
-      return respond('3. Is there anything standing in your way?')
-
-    case 'answered2':
-      await updateStandup(userId, { answer3: text, standupStatus: 'completed' })
+  if (/(started)|(answered\d+)/.test(status)) {
+    const answerIndex = status === 'started' ? 0 : parseInt(/\d+/.exec(status)[0]) + 1
+    if (answerIndex + 1 >= config.questions.length) {
+      await updateStandup(userId, { [`answer${answerIndex}`]: text, standupStatus: 'completed' })
       await checkStandups()
-      return respond('Thank you, that will be all for today')
+      return respond(config.completing)
+    }
+    await updateStandup(userId, { [`answer${answerIndex}`]: text, standupStatus: `answered${answerIndex}` })
+    return respond(config.questions[answerIndex + 1])
+  }
 
+  switch (status) {
     case 'initiated':
-      return respond('Please click on one of the buttons above to start or skip')
+      return respond(config.initiated)
 
     case 'skipped':
-      return respond('You skipped the standup today')
+      return respond(config.skipped)
 
     case 'completed':
-      return respond('You already completed the standup today')
+      return respond(config.completed)
 
     case 'timedout':
-      return respond('You did not manage to complete the standup on time')
+      return respond(config.timedout)
 
     default:
       return respond('Unknown status: ' + status)

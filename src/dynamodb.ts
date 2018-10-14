@@ -1,7 +1,8 @@
 import * as AWS from 'aws-sdk'
 
 let options = {}
-if (process.env.IS_OFFLINE) {
+// IS_OFFLINE for sls-offline, IS_LOCAL for sls invoke local
+if (process.env.IS_OFFLINE || process.env.IS_LOCAL) {
   options = { region: 'localhost', endpoint: 'http://localhost:8000' }
 }
 const client = new AWS.DynamoDB.DocumentClient(options)

@@ -1,5 +1,6 @@
 import { WebClient } from '@slack/client'
 import dynamodb from './dynamodb'
+import config from './config'
 
 const getMessage = (channel, text) => ({
   channel,
@@ -37,10 +38,7 @@ const sendStandupInit = (users, ims) => userId => {
   if (member.name === 'peter') return
   const imChannel = ims.find(im => im.user === userId)
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)
-  return Promise.all([
-    web.chat.postMessage(getMessage(imChannel.id, `Hi ${member.real_name}, let's get ready for the standup`)),
-    createResponse(userId),
-  ])
+  return Promise.all([web.chat.postMessage(getMessage(imChannel.id, config.starting)), createResponse(userId)])
 }
 
 export const handler = async (event, context, cb) => {
