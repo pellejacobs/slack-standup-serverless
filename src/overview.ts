@@ -1,6 +1,6 @@
 import { getTodayStandups, updateStandup, getStandup } from './dynamodb'
 import { WebClient } from '@slack/client'
-import { createResponse } from './main'
+import { createResponse } from './start'
 
 const sendOverview = async allStandups => {
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)

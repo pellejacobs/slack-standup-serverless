@@ -19,14 +19,18 @@ provider:
       Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}'
 
 functions:
-  main:
-    handler: src/main.handler
+  start:
+    handler: src/start.handler
     events:
-      - scheduler: cron()
+      - schedule:
+          name: daily-start-standup
+          rate: cron(0 6 ? * MON-FRI *)
   overview:
     handler: src/overview.handler
     events:
-      - scheduler: cron()
+      - schedule:
+          name: daily-deadline-standup
+          rate: cron(0 8 ? * MON-FRI *)
   interactive:
     handler: src/interactive.handler
     events:
