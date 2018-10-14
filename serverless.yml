@@ -6,6 +6,7 @@ provider:
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     SLACK_BOT_TOKEN: ${file(./.env.yml):SLACK_BOT_TOKEN}
+    CHANNEL_NAME: ${file(./.env.yml):CHANNEL_NAME}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -20,6 +21,10 @@ provider:
 functions:
   main:
     handler: src/main.handler
+    events:
+      - scheduler: cron()
+  overview:
+    handler: src/overview.handler
     events:
       - scheduler: cron()
   interactive:

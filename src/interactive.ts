@@ -1,4 +1,5 @@
 import { updateStandup, getStandup } from './dynamodb'
+import { checkStandups } from './overview'
 
 export const handler = async (event, context, cb) => {
   const rawbody = decodeURIComponent(event.body).replace('payload=', '')
@@ -15,7 +16,11 @@ export const handler = async (event, context, cb) => {
     })
   }
   const action = body.actions[0].value
-  await updateStandup(userId, { standupStatus: action === 'skip' ? 'skipped' : 'started' })
-  const text = action === 'skip' ? 'Ok, skipping this standup' : `Let's go!\n1. What did you do yesterday?`
-  return cb(null, { status: 200, body: JSON.stringify({ text }) })
+  if (action === 'skip') {
+    await updateStandup(userId, { standupStatus: 'skipped' })
+    cb(null, { body: JSON.stringify({ text: 'Ok, skipping this standup' }) })
+    return checkStandups()
+  }
+  await updateStandup(userId, { standupStatus: 'started' })
+  return cb(null, { body: JSON.stringify({ text: `Let's go!\n1. What did you do yesterday?` }) })
 }

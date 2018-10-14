@@ -1,5 +1,6 @@
 import { WebClient } from '@slack/client'
 import { getStandup, updateStandup } from './dynamodb'
+import { checkStandups } from './overview'
 
 const sendMessage = (channel, text) => {
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)
@@ -29,6 +30,7 @@ export const handler = async (event, context, cb) => {
 
     case 'answered2':
       await updateStandup(userId, { answer3: text, standupStatus: 'completed' })
+      await checkStandups()
       return respond('Thank you, that will be all for today')
 
     case 'initiated':

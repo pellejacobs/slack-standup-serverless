@@ -9,8 +9,8 @@ const client = new AWS.DynamoDB.DocumentClient(options)
 const getStandupDate = () => new Date().toISOString().substring(0, 10)
 
 export const updateStandup = (userId, updatedFields) => {
-  const params: any = {
-    TableName: process.env.DYNAMODB_TABLE,
+  const params = {
+    TableName: process.env.DYNAMODB_TABLE as string,
     Key: { standupDate: getStandupDate(), userId },
     ExpressionAttributeValues: Object.keys(updatedFields).reduce((acc, key, index) => {
       const valueKey = `:value${index}`
@@ -29,14 +29,28 @@ export const updateStandup = (userId, updatedFields) => {
 }
 
 export const getStandup = userId => {
-  const params: any = {
-    TableName: process.env.DYNAMODB_TABLE,
+  const params = {
+    TableName: process.env.DYNAMODB_TABLE as string,
     Key: { standupDate: getStandupDate(), userId },
   }
   return new Promise<any>((resolve, reject) => {
     client.get(params, (err, data) => {
       if (err) reject(err)
       else resolve(data)
+    })
+  })
+}
+
+export const getTodayStandups = () => {
+  const params = {
+    TableName: process.env.DYNAMODB_TABLE as string,
+    KeyConditionExpression: 'standupDate = :sd',
+    ExpressionAttributeValues: { ':sd': getStandupDate() },
+  }
+  return new Promise<any>((resolve, reject) => {
+    client.query(params, (err, data) => {
+      if (err) reject(err)
+      else resolve(data.Items)
     })
   })
 }

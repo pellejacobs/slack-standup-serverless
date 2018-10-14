@@ -18,7 +18,7 @@ const getMessage = (channel, text) => ({
   ],
 })
 
-const createResponse = userId => {
+export const createResponse = userId => {
   const standupDate = new Date().toISOString().substring(0, 10)
   const params: any = {
     TableName: process.env.DYNAMODB_TABLE,
@@ -43,15 +43,15 @@ const sendStandupInit = (users, ims) => userId => {
   ])
 }
 
-export const handler = async (event, context, callback) => {
+export const handler = async (event, context, cb) => {
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)
   const usersResponse: any = await web.users.list()
   const imResponse: any = await web.im.list()
 
   // TODO: Add option for public channels, allow for custom channel
   const groupsResponse: any = await web.groups.list()
-  const channel = groupsResponse.groups.find(g => g.name === 'standup-test')
+  const channel = groupsResponse.groups.find(g => g.name === process.env.CHANNEL_NAME)
 
   await Promise.all(channel.members.map(sendStandupInit(usersResponse.members, imResponse.ims)))
-  callback(null, {})
+  cb(null, {})
 }
