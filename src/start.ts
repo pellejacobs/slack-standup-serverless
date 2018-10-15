@@ -33,23 +33,25 @@ export const createResponse = userId => {
   })
 }
 
-const sendStandupInit = (users, ims) => userId => {
+const sendStandupInit = users => async userId => {
   const member = users.find(u => u.id === userId)
-  if (member.name === 'peter') return
-  const imChannel = ims.find(im => im.user === userId)
+  if (member.is_bot) return
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)
-  return Promise.all([web.chat.postMessage(getMessage(imChannel.id, config.starting)), createResponse(userId)])
+  const imChannelReponse: any = await web.im.open({ user: userId })
+  return Promise.all([
+    web.chat.postMessage(getMessage(imChannelReponse.channel.id, config.starting)),
+    createResponse(userId),
+  ])
 }
 
 export const handler = async (event, context, cb) => {
   const web = new WebClient(process.env.SLACK_BOT_TOKEN)
   const usersResponse: any = await web.users.list()
-  const imResponse: any = await web.im.list()
 
   // TODO: Add option for public channels, allow for custom channel
   const groupsResponse: any = await web.groups.list()
   const channel = groupsResponse.groups.find(g => g.name === process.env.CHANNEL_NAME)
 
-  await Promise.all(channel.members.map(sendStandupInit(usersResponse.members, imResponse.ims)))
+  await Promise.all(channel.members.map(sendStandupInit(usersResponse.members)))
   cb(null, {})
 }

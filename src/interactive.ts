@@ -9,7 +9,7 @@ export const handler = async (event, context, cb) => {
   const body = JSON.parse(rawbody)
   const userId = body.user.id
   const theStandup = await getStandup(userId)
-  if (!theStandup || ['initiated', 'started'].includes(theStandup.Item.standupStatus)) {
+  if (!theStandup || !['initiated', 'started'].includes(theStandup.Item.standupStatus)) {
     return cb(null, {
       body: JSON.stringify({
         text: 'No standup currently active',
