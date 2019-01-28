@@ -37,7 +37,7 @@ const sendOverview = async allStandups => {
   })
 }
 
-const isNotComplete = standup => !['completed', 'skipped'].includes(standup.standupStatus)
+export const isNotComplete = standup => !['completed', 'skipped'].includes(standup.standupStatus)
 
 export const checkStandups = async () => {
   const allStandups = await getTodayStandups()

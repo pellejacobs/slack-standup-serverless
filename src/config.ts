@@ -1,9 +1,10 @@
 const config = {
   early: 'The standup has not started yet',
   starting: "Let's get ready for the standup",
+  reminder: 'Hey! You only have 15 minutes left to finish your standup.',
   skipping: 'Ok, skipping this standup',
   questions: [
-    `1. What did you do ${new Date().getDate() === 1 ? 'last Friday' : 'yesterday'}?`,
+    `1. What did you do ${new Date().getDay() === 1 ? 'last Friday' : 'yesterday'}?`,
     '2. What are you working on today?',
     '3. Is there anything standing in your way?',
   ],

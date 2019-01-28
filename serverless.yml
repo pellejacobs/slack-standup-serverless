@@ -26,6 +26,12 @@ functions:
       - schedule:
           name: daily-start-standup
           rate: cron(0 7 ? * MON-FRI *)
+  reminder:
+    handler: src/reminder.handler
+    events:
+      - schedule:
+          name: daily-reminder-standup
+          rate: cron(45 8 ? * MON-FRI *)
   overview:
     handler: src/overview.handler
     events:
